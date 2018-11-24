@@ -22,7 +22,9 @@ class AccountCreationTests: XCTestCase {
     let invalidCode : String = "invalidCode"
     let user = User(username: "", email: "")
     
-    XCTAssertThrowsError(try createNewUser(withInvitationCode: invalidCode, user: user, password: ""))
+    XCTAssertThrowsError(try createNewUser(withInvitationCode: invalidCode, user: user, password: "")) { error in
+      XCTAssertEqual(error as! Errors, Errors.InvalidInviteCodeError)
+    }
   }
 
   func test_ValidInvitationCode_ReturnsUserObject() {
@@ -45,7 +47,7 @@ class AccountCreationTests: XCTestCase {
     }
   }
   
-  enum AppError: Error {
+  enum Errors: Error {
     case InvalidInviteCodeError
   }
 
@@ -54,6 +56,6 @@ class AccountCreationTests: XCTestCase {
     if validationCode == "validCode" {
       return User(username: user.username, email: user.email)
     }
-    throw AppError.InvalidInviteCodeError
+    throw Errors.InvalidInviteCodeError
   }
 }
