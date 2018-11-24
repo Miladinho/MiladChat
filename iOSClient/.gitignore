@@ -1,0 +1,4 @@
+*.xcodeproj/*
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
+/*.gcno
