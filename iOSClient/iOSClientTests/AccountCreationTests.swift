@@ -20,8 +20,9 @@ class AccountCreationTests: XCTestCase {
 
   func test_InvalidInvitationCode_Throws_InvalidInviteCodeError() {
     let invalidCode : String = "invalidCode"
+    let user = User(username: "", email: "")
     
-    XCTAssertThrowsError(try createNewUser(withInvitationCode: invalidCode, "", "", ""))
+    XCTAssertThrowsError(try createNewUser(withInvitationCode: invalidCode, user: user, password: ""))
   }
 
   func test_ValidInvitationCode_ReturnsUserObject() {
@@ -29,11 +30,11 @@ class AccountCreationTests: XCTestCase {
     let username = "test"
     let password = "test"
     let email = "test@test.com"
-    
-    
     let user = User(username: username, email: email)
-    XCTAssertEqual(try createNewUser(withInvitationCode: validCode, username, password, email), user)
+    
+    XCTAssertEqual(try createNewUser(withInvitationCode: validCode, user: user, password: password), user)
   }
+  
   
   // MARK: - Application code
   struct User: Equatable {
@@ -43,13 +44,16 @@ class AccountCreationTests: XCTestCase {
       return lhs.username == rhs.username && lhs.email == rhs.email
     }
   }
+  
+  enum AppError: Error {
+    case InvalidInviteCodeError
+  }
 
   // refactor into seperate class or struct later
-  func createNewUser(withInvitationCode validationCode: String, _ username: String, _ password: String, _ email: String) throws -> User {
-    struct InvalidInviteCodeError: Error {} // create as part of enum later
+  func createNewUser(withInvitationCode validationCode: String, user: User, password: String) throws -> User {
     if validationCode == "validCode" {
-      return User(username: username, email: email)
+      return User(username: user.username, email: user.email)
     }
-    throw InvalidInviteCodeError()
+    throw AppError.InvalidInviteCodeError
   }
 }
