@@ -10,52 +10,57 @@ import XCTest
 @testable import iOSClient
 
 class AccountCreationTests: XCTestCase {
-  override func setUp() {
-      // Put setup code here. This method is called before the invocation of each test method in the class.
+  
+  class UserAuthSpy: UserAuthService {
+    var validCode: String = "valid"
+    func isValidInvite(code: String, completion: @escaping (Error?, Bool) -> Void) {
+      validCode.elementsEqual(code) ? completion(nil, true): completion(Errors.InvalidInviteCode, false)
+    }
+    func getNewInviteCode() {
+      
+    }
   }
-
-  override func tearDown() {
-      // Put teardown code here. This method is called after the invocation of each test method in the class.
-  }
-
-  func test_InvalidInvitationCode_Throws_InvalidInviteCodeError() {
-    let invalidCode : String = "invalidCode"
-    let user = User(username: "", email: "")
+  
+  let userManager = UserManager(with: UserAuthSpy())
+  
+  func test_InvalidInvitationCode_Returns_InvalidInviteCodeError() {
+    let invalidCode: String = "invalidCode"
+    let u = User(username: "", email: "")
     
-    XCTAssertThrowsError(try createNewUser(withInvitationCode: invalidCode, user: user, password: "")) { error in
-      XCTAssertEqual(error as! Errors, Errors.InvalidInviteCodeError)
-    }
-  }
-
-  func test_ValidInvitationCode_ReturnsUserObject() {
-    let validCode : String = "validCode"
-    let username = "test"
-    let password = "test"
-    let email = "test@test.com"
-    let user = User(username: username, email: email)
+    let expectation = XCTestExpectation()
     
-    XCTAssertEqual(try createNewUser(withInvitationCode: validCode, user: user, password: password), user)
-  }
-  
-  
-  // MARK: - Application code
-  struct User: Equatable {
-    var username: String
-    var email: String
-    static func ==(_ lhs: User, _ rhs: User) -> Bool {
-      return lhs.username == rhs.username && lhs.email == rhs.email
+    userManager.createNewUser(withInvitationCode: invalidCode, newUser: u) { error, user in
+      XCTAssertEqual(error as! Errors, Errors.InvalidInviteCode)
+      XCTAssertNil(user)
+      expectation.fulfill()
     }
-  }
-  
-  enum Errors: Error {
-    case InvalidInviteCodeError
   }
 
-  // refactor into seperate class or struct later
-  func createNewUser(withInvitationCode validationCode: String, user: User, password: String) throws -> User {
-    if validationCode == "validCode" {
-      return User(username: user.username, email: user.email)
+  func test_ValidInvitationCode_Returns_UserObject() {
+    let validCode : String = "valid"
+    let u = User(username: "test", email: "test@test.com")
+
+    userManager.createNewUser(withInvitationCode: validCode, newUser: u) { error, user in
+      XCTAssertEqual(user, u)
+      XCTAssertNil(error)
     }
-    throw Errors.InvalidInviteCodeError
   }
+
+//  func test_Reused_ValidInvitationCode_Returns_InvalidInviteCodeError() {
+//    let validCode : String = userManager.getNewInviteCode()
+//    let u = User(username: "", email: "")
+//
+//    let expectation = XCTestExpectation()
+//    userManager.createNewUser(withInvitationCode: validCode, newUser: u) { error, user in
+//      XCTAssertEqual(user, u)
+//    }
+//
+//    userManager.createNewUser(withInvitationCode: validCode, newUser: u) { err, usr in
+//
+//      XCTAssertEqual(err as! Errors, Errors.InvalidInviteCode)
+//      expectation.fulfill()
+//    }
+//  }
+  
 }
+
