@@ -14,10 +14,9 @@ enum Errors: Error {
 
 protocol UserAuthService {
   func isValidInvite(code: String, completion: @escaping (Error?, Bool) -> Void)
-  func getNewInviteCode()
 }
 
-class UserManager {
+class AccountManager {
   private var AuthService : UserAuthService
   
   init (with authenticationService: UserAuthService) {
@@ -25,7 +24,6 @@ class UserManager {
   }
   
   func createNewUser(withInvitationCode inviteCode: String, newUser: User, completion: @escaping (Error?, User?) -> Void) {
-    
     AuthService.isValidInvite(code: inviteCode) { error, valid in
       if valid {
         completion(nil, newUser)
@@ -34,4 +32,5 @@ class UserManager {
       }
     }
   }
+
 }
