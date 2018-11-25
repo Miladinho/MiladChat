@@ -25,7 +25,7 @@ class AccountCreationTests: XCTestCase {
   
   let accountManager = AccountManager(with: UserAuthSpy())
   
-  func test_InvalidInvitationCode_Returns_InvalidInviteCodeError() {
+  func test_InvalidInviteCode_Returns_InvalidInviteCodeError() {
     let u = User(username: "", email: "")
     
     let expectation = XCTestExpectation()
@@ -37,7 +37,7 @@ class AccountCreationTests: XCTestCase {
     }
   }
 
-  func test_ValidInvitationCode_Returns_UserObject() {
+  func test_ValidInvitenCode_Returns_UserObject() {
     let u = User(username: "test", email: "test@test.com")
     let validCode : String = "valid"
     
@@ -53,7 +53,7 @@ class AccountCreationTests: XCTestCase {
    keeping it still in order to study async test behavior (below test is false
    positive)
   */
-//  func test_Reused_ValidInvitationCode_Returns_InvalidInviteCodeError() {
+//  func test_Reused_ValidInviteCode_Returns_InvalidInviteCodeError() {
 //    let u = User(username: "", email: "")
 //    let expectation = XCTestExpectation()
 //
