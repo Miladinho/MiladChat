@@ -2,7 +2,7 @@ import XCTest
 @testable import iOSClient
 
 class AccountCreationTests: XCTestCase {
-  let accountManager = AccountManager(with: UserAuthSpy())
+  let userManager = UserManager(with: UserAuthSpy())
   
   class UserAuthSpy: APIService {
     var inviteCode: String = "valid"
@@ -20,7 +20,7 @@ class AccountCreationTests: XCTestCase {
     
     let expectation = XCTestExpectation()
     let invalidCode: String = "invalidCode"
-    accountManager.createNewUser(withInvitationCode: invalidCode, newUser: u) { error, user in
+    userManager.create(withInvitationCode: invalidCode, newUser: u) { error, user in
       if let err = error {
         XCTAssertEqual(err as! Errors, Errors.InvalidInviteCode)
         XCTAssertNil(user)
@@ -36,7 +36,7 @@ class AccountCreationTests: XCTestCase {
     let validCode: String = "valid"
     
     let expectation = XCTestExpectation()
-    accountManager.createNewUser(withInvitationCode: validCode, newUser: u) { error, user in
+      userManager.create(withInvitationCode: validCode, newUser: u) { error, user in
       XCTAssertEqual(user, u)
       XCTAssertNil(error)
       expectation.fulfill()
