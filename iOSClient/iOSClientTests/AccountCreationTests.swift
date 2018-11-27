@@ -1,29 +1,19 @@
-//
-//  iOSClientTests.swift
-//  iOSClientTests
-//
-//  Created by Milad on 11/21/18.
-//  Copyright © 2018 Milad. All rights reserved.
-//
-
 import XCTest
 @testable import iOSClient
 
 class AccountCreationTests: XCTestCase {
+  let accountManager = AccountManager(with: UserAuthSpy())
   
-  class UserAuthSpy: UserAuthService {
+  class UserAuthSpy: APIService {
     var inviteCode: String = "valid"
-    func isValidInvite(code: String, completion: @escaping (Error?, Bool) -> Void) {
+    func createUser(code: String, completion: @escaping (Error?, Bool) -> Void) {
       if inviteCode.elementsEqual(code) {
         completion(nil, true)
-        inviteCode = ""
       } else {
         completion(NSError(), false)
       }
     }
   }
-  
-  let accountManager = AccountManager(with: UserAuthSpy())
   
   func test_InvalidInviteCode_Returns_InvalidInviteCodeError() {
     let u = User(username: "", email: "")
@@ -31,15 +21,19 @@ class AccountCreationTests: XCTestCase {
     let expectation = XCTestExpectation()
     let invalidCode: String = "invalidCode"
     accountManager.createNewUser(withInvitationCode: invalidCode, newUser: u) { error, user in
-      XCTAssertEqual(error as! Errors, Errors.InvalidInviteCode)
-      XCTAssertNil(user)
+      if let err = error {
+        XCTAssertEqual(err as! Errors, Errors.InvalidInviteCode)
+        XCTAssertNil(user)
+      } else {
+        XCTFail()
+      }
       expectation.fulfill()
     }
   }
 
-  func test_ValidInvitenCode_Returns_UserObject() {
+  func test_ValidInviteCode_Returns_UserObject() {
     let u = User(username: "test", email: "test@test.com")
-    let validCode : String = "valid"
+    let validCode: String = "valid"
     
     let expectation = XCTestExpectation()
     accountManager.createNewUser(withInvitationCode: validCode, newUser: u) { error, user in

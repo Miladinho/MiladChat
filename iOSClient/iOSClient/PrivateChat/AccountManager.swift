@@ -1,30 +1,22 @@
-//
-//  UserManager.swift
-//  iOSClientTests
-//
-//  Created by Milad on 11/23/18.
-//  Copyright © 2018 Milad. All rights reserved.
-//
-
 import Foundation
 
 enum Errors: Error {
   case InvalidInviteCode
 }
 
-protocol UserAuthService {
-  func isValidInvite(code: String, completion: @escaping (Error?, Bool) -> Void)
+protocol APIService {
+  func createUser(code: String, completion: @escaping (Error?, Bool) -> Void)
 }
 
 class AccountManager {
-  private var AuthService : UserAuthService
+  private var AuthService : APIService
   
-  init (with authenticationService: UserAuthService) {
+  init (with authenticationService: APIService) {
     self.AuthService = authenticationService
   }
   
   func createNewUser(withInvitationCode inviteCode: String, newUser: User, completion: @escaping (Error?, User?) -> Void) {
-    AuthService.isValidInvite(code: inviteCode) { error, valid in
+    AuthService.createUser(code: inviteCode) { error, valid in
       if valid {
         completion(nil, newUser)
       } else {
