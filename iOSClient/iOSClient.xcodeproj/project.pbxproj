@@ -11,6 +11,7 @@
 		116CA37121ADD9DD00D62768 /* ChatManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116CA37021ADD9DD00D62768 /* ChatManager.swift */; };
 		116CA37221ADDA3200D62768 /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E254A221A8E4EB00CDB3A0 /* UserManager.swift */; };
 		116CA37421ADDBEC00D62768 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116CA37321ADDBEC00D62768 /* User.swift */; };
+		116CA37921ADF71700D62768 /* PercentLayoutConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116CA37821ADF71700D62768 /* PercentLayoutConstraint.swift */; };
 		11E2546F21A63A1600CDB3A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E2546E21A63A1600CDB3A0 /* AppDelegate.swift */; };
 		11E2547121A63A1600CDB3A0 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E2547021A63A1600CDB3A0 /* LoginViewController.swift */; };
 		11E2547421A63A1600CDB3A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11E2547221A63A1600CDB3A0 /* Main.storyboard */; };
@@ -42,6 +43,7 @@
 		116CA36D21AD137A00D62768 /* ParseServerChatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseServerChatTests.swift; sourceTree = "<group>"; };
 		116CA37021ADD9DD00D62768 /* ChatManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatManager.swift; sourceTree = "<group>"; };
 		116CA37321ADDBEC00D62768 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		116CA37821ADF71700D62768 /* PercentLayoutConstraint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PercentLayoutConstraint.swift; sourceTree = "<group>"; };
 		11E2546B21A63A1600CDB3A0 /* iOSClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		11E2546E21A63A1600CDB3A0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		11E2547021A63A1600CDB3A0 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				11E2547A21A63A1700CDB3A0 /* LaunchScreen.storyboard */,
 				11E2547D21A63A1700CDB3A0 /* Info.plist */,
 				11E2547521A63A1600CDB3A0 /* iOSClient.xcdatamodeld */,
+				116CA37821ADF71700D62768 /* PercentLayoutConstraint.swift */,
 			);
 			path = iOSClient;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 				116CA37121ADD9DD00D62768 /* ChatManager.swift in Sources */,
 				116CA37421ADDBEC00D62768 /* User.swift in Sources */,
 				11E2547121A63A1600CDB3A0 /* LoginViewController.swift in Sources */,
+				116CA37921ADF71700D62768 /* PercentLayoutConstraint.swift in Sources */,
 				11E2547721A63A1600CDB3A0 /* iOSClient.xcdatamodeld in Sources */,
 				11E2546F21A63A1600CDB3A0 /* AppDelegate.swift in Sources */,
 			);
