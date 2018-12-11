@@ -2,25 +2,26 @@ import XCTest
 @testable import iOSClient
 
 class AccountCreationTests: XCTestCase {
-  let userManager = UserManager(with: UserAuthSpy())
+  //let userManager : UserManager?
   
-  class UserAuthSpy: APIService {
+  class UserAuthSpy: AuthService {
     var inviteCode: String = "valid"
-    func createUser(code: String, completion: @escaping (Error?, Bool) -> Void) {
-      if inviteCode.elementsEqual(code) {
-        completion(nil, true)
+    func createUser(username: String, password: String, inviteCode: String, completion: @escaping (Error?, String?) -> Void) {
+      if inviteCode.elementsEqual(self.inviteCode) {
+        completion(nil, "auth-true")
       } else {
-        completion(NSError(), false)
+        completion(NSError(), nil)
       }
     }
   }
+  func setup() {
   
+  }
   func test_InvalidInviteCode_Returns_InvalidInviteCodeError() {
-    let u = User(username: "", email: "")
-    
     let expectation = XCTestExpectation()
-    let invalidCode: String = "invalidCode"
-    userManager.create(withInvitationCode: invalidCode, newUser: u) { error, user in
+    let userManager = UserManager(with: UserAuthSpy())
+    
+    userManager.createUser(withInvitationCode: "invalidCode", username: "testuser", email: "test@test.com",password: "testpass"){ error, user in
       if let err = error {
         XCTAssertEqual(err as! Errors, Errors.InvalidInviteCode)
         XCTAssertNil(user)
@@ -32,12 +33,14 @@ class AccountCreationTests: XCTestCase {
   }
 
   func test_ValidInviteCode_Returns_UserObject() {
-    let u = User(username: "test", email: "test@test.com")
-    let validCode: String = "valid"
-    
     let expectation = XCTestExpectation()
-      userManager.create(withInvitationCode: validCode, newUser: u) { error, user in
-      XCTAssertEqual(user, u)
+    let userManager = UserManager(with: UserAuthSpy())
+    let username = "testuser"
+    let password = "testpass"
+    let expectedUser = User(username: username, email: password)
+    
+    userManager.createUser(withInvitationCode: "valid", username: username, email: "test@test.com",password: password) { error, user in
+      XCTAssertEqual(user, expectedUser)
       XCTAssertNil(error)
       expectation.fulfill()
     }

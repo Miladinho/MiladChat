@@ -1,0 +1,23 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'iOSClient' do
+  use_frameworks!
+
+  # Pods for iOSClient
+  pod 'Firebase/Core'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Storage'
+  pod 'Firebase/Firestore'
+
+  target 'iOSClientTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'iOSClientUITests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end

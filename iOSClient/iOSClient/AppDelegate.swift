@@ -8,15 +8,23 @@
 
 import UIKit
 import CoreData
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
   var window: UIWindow?
-
+  var appCoordinator: AppCoordinator?
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    // Override point for customization after application launch.
+    
+    FirebaseApp.configure()
+    
+    window = UIWindow()
+    let nc = UINavigationController()
+    appCoordinator = AppCoordinator(navigationController: nc)
+    appCoordinator!.start(loggedIn: false)
+    window?.rootViewController = nc
+    window?.makeKeyAndVisible()
     return true
   }
 

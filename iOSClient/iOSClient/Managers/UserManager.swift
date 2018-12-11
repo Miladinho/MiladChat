@@ -4,23 +4,24 @@ enum Errors: Error {
   case InvalidInviteCode
 }
 
-protocol APIService {
-  func createUser(code: String, completion: @escaping (Error?, Bool) -> Void)
+protocol AuthService {
+  func createUser(username: String, password: String, inviteCode: String, completion: @escaping (_ error: Error?, _ authToken: String?) -> Void)
 }
 
 class UserManager {
-  private var AuthService : APIService
+  private var authService : AuthService
   
-  init (with authenticationService: APIService) {
-    self.AuthService = authenticationService
+  init (with authenticationService: AuthService) {
+    self.authService = authenticationService
   }
   
-  func create(withInvitationCode inviteCode: String, newUser: User, completion: @escaping (Error?, User?) -> Void) {
-    AuthService.createUser(code: inviteCode) { error, valid in
-      if valid {
-        completion(nil, newUser)
-      } else {
+  func createUser(withInvitationCode inviteCode: String, username: String, email: String, password: String, completion: @escaping (Error?, User?) -> Void) {
+    authService.createUser(username: username, password: password, inviteCode: inviteCode) {
+      error, authToken in
+      if let _ = error {
         completion(Errors.InvalidInviteCode, nil)
+      } else {
+        completion(nil, User(username: username, email: email))
       }
     }
   }
