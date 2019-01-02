@@ -10,8 +10,6 @@ import UIKit
 import MessageKit
 import Photos
 import Firebase // for User class
-import FirebaseFirestore
-
 
 protocol ChatroomViewControllerProtocol: AnyObject {
   func didtapLogout(completion: @escaping (Error?) -> Void)
