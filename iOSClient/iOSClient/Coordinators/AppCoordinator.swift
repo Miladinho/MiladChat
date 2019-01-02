@@ -31,7 +31,7 @@ class AppCoordinator {
     authCoordinator!.delegate = self
     authCoordinator!.start()
   }
-  
+   
   func showChat() {
     print("showing chat")
     chatCoordinator = ChatCoordinator(navigationController: navigationController)
@@ -44,10 +44,15 @@ extension AppCoordinator: AuthCoordinatorDelegate {
   func didAuthenticate(coordinator: AuthCoordinator) {
     print("AuthCoordinator did Authenticate")
     self.authCoordinator = nil
+    self.navigationController.viewControllers.removeAll() // this is odd here, make a flow and clean nav on each flow change
     self.showChat()
   }
 }
 
 extension AppCoordinator: ChatCoordinatorDelegate {
-  
+  func didLogout(coordinator: ChatCoordinator) {
+    chatCoordinator = nil
+    self.navigationController.viewControllers.removeAll()
+    self.showAuthentication()
+  }
 }

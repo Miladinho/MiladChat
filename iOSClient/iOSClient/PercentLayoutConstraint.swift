@@ -1,5 +1,5 @@
 // From: http://basememara.com/percentage-based-margin-using-autolayout-storyboard/
-// May God bless LOL
+// May God bless his/her soul LOL
 
 import UIKit
 
@@ -16,10 +16,8 @@ class PercentLayoutConstraint: NSLayoutConstraint {
     super.awakeFromNib()
     
     guard marginPercent > 0 else { return }
-    NotificationCenter.default.addObserver(self,
-                                                     selector: #selector(layoutDidChange),
-                                                     name: UIDevice.orientationDidChangeNotification,
-                                                     object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(layoutDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+    // UIDevice.orientationDidChangeNotification
   }
   
   /**

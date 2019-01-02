@@ -10,7 +10,7 @@ import UIKit
 import FirebaseAuth
 
 protocol ChatCoordinatorDelegate: AnyObject {
-  
+  func didLogout(coordinator: ChatCoordinator)
 }
 
 class ChatCoordinator {
@@ -27,8 +27,20 @@ class ChatCoordinator {
   }
   
   func showChatroomVC() {
-    let chatroom = ChatroomViewController()
-    // chatroom.delegate = self
+    let chatroom = ChatroomViewController(user: Auth.auth().currentUser!)
+    chatroom.delegate = self
     navigationController.pushViewController(chatroom, animated: true)
+  }
+}
+
+extension ChatCoordinator: ChatroomViewControllerProtocol {
+  func didtapLogout(completion: @escaping (Error?) -> Void) {
+    do {
+      try Auth.auth().signOut()
+      completion(nil)
+      delegate?.didLogout(coordinator: self)
+    } catch {
+      completion(error)
+    }
   }
 }

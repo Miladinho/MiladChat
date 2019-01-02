@@ -15,13 +15,13 @@ class UserManager {
     self.authService = authenticationService
   }
   
-  func createUser(withInvitationCode inviteCode: String, username: String, email: String, password: String, completion: @escaping (Error?, User?) -> Void) {
+  func createUser(withInvitationCode inviteCode: String, username: String, email: String, password: String, completion: @escaping (Error?, Userr?) -> Void) {
     authService.createUser(username: username, password: password, inviteCode: inviteCode) {
       error, authToken in
       if let _ = error {
         completion(Errors.InvalidInviteCode, nil)
       } else {
-        completion(nil, User(username: username, email: email))
+        completion(nil, Userr(username: username, email: email))
       }
     }
   }

@@ -8,8 +8,8 @@
 
 import UIKit
 
-protocol CreateAccountViewControllerDelegate {
-  func didTapCreate(username: String, password: String, email: String, inviteCode: String, viewController: UIViewController)
+protocol CreateAccountViewControllerDelegate: AnyObject {
+  func didTapCreate(username: String, password: String, email: String, inviteCode: String, completion: @escaping (Error?) -> Void)
 }
 
 class CreateAccountViewController: UIViewController {
@@ -22,7 +22,7 @@ class CreateAccountViewController: UIViewController {
   let alert = UIAlertController(title: "An Error occured!", message: "", preferredStyle: .alert)
   let dismisAction = UIAlertAction(title: "Dismis", style: .cancel, handler: nil)
   
-  var delegate: CreateAccountViewControllerDelegate!
+  weak var delegate: CreateAccountViewControllerDelegate?
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -57,7 +57,14 @@ class CreateAccountViewController: UIViewController {
     if confPassword != password {
       showError(message: "Passwords do not match!")
     } else {
-      self.delegate!.didTapCreate(username: username, password: password, email: email, inviteCode: inviteCode, viewController: self)
+      showLoadingHUD(for: self.view!, text: "Creating...")
+      self.delegate!.didTapCreate(username: username, password: password, email: email, inviteCode: inviteCode) {
+        [weak self] (error) in
+        if error != nil {
+          self!.showError(message: error!.localizedDescription)
+        }
+        self!.hideLoadingHUD(for: self!.view)
+      }
     }
   }
   

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MBProgressHUD
 
 protocol LoginViewControllerDelegate: AnyObject {
   func didTapCreateAccount(completion: @escaping (Error?) -> Void)
@@ -41,7 +42,7 @@ class LoginViewController: UIViewController {
   }
   
   override func viewWillAppear(_ animated: Bool) {
-    self.navigationController?.navigationBar.isHidden = true
+    navigationController?.navigationBar.isHidden = true
   }
   
   deinit {
@@ -55,12 +56,14 @@ class LoginViewController: UIViewController {
   
   @IBAction func enterChat(_ sender: Any) {
     print(self.nibName, #function)
-
+    
+    showLoadingHUD(for: self.view!, text: "Logging in...")
     delegate!.didTapLogin(with: emailTextField.text!, password: passwordTextField.text!) {
-      error in
+      [weak self] error in
       if error != nil {
-        self.showError(message: "Login failed!")
+        self!.showError(message: "Login failed!")
       }
+      self!.hideLoadingHUD(for: self!.view!)
     }
   }
   
@@ -72,4 +75,3 @@ class LoginViewController: UIViewController {
   }
   
 }
-

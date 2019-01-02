@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseMessaging
 
 protocol AuthCoordinatorDelegate: AnyObject {
   func didAuthenticate(coordinator: AuthCoordinator)
@@ -44,7 +45,13 @@ class AuthCoordinator {
   func dismissLoginVC() {
     loginVC?.delegate = nil
     loginVC = nil
-    navigationController.dismiss(animated: true, completion: nil)
+    navigationController.popViewController(animated: true)
+  }
+  
+  func dismissCreateAccountVC() {
+    createAccountVC?.delegate = nil
+    createAccountVC = nil
+    navigationController.popViewController(animated: true)
   }
 }
 
@@ -57,6 +64,13 @@ extension AuthCoordinator: LoginViewControllerDelegate {
       } else if self != nil && self?.delegate != nil {
         self!.dismissLoginVC()
         self!.delegate.didAuthenticate(coordinator: self!)
+        Messaging.messaging().subscribe(toTopic: "pushNotifications") { error in
+          if error != nil {
+            print("error subscribing", error)
+          } else {
+            print("Subscribed to weather topic")
+          }
+        }
         completion(nil)
       } else {
         completion(NSError(domain: "Fatal Error: Unwrapping optional would give nil.", code: 0, userInfo: nil))
@@ -71,7 +85,37 @@ extension AuthCoordinator: LoginViewControllerDelegate {
 }
 
 extension AuthCoordinator: CreateAccountViewControllerDelegate {
-    func didTapCreate(username: String, password: String, email: String, inviteCode: String, viewController: UIViewController) {
-        print(username)
+  func didTapCreate(username: String, password: String, email: String, inviteCode: String, completion: @escaping (Error?) -> Void) {
+      Auth.auth().createUser(withEmail: email, password: password) { [weak self] (result, error) in
+        print("did tap create", result, error)
+        if error != nil {
+          completion(error)
+        } else if self != nil && self?.delegate != nil {
+          let changeRequest = result?.user.createProfileChangeRequest()
+          changeRequest?.displayName = username
+          changeRequest?.commitChanges() { error in
+            self!.dismissCreateAccountVC()
+            self!.delegate.didAuthenticate(coordinator: self!)
+            Messaging.messaging().subscribe(toTopic: "pushNotifications") { error in
+              if error != nil {
+                print("error subscribing", error)
+              } else {
+                print("Subscribed to weather topic")
+              }
+            }
+
+            completion(nil)
+          }
+
+        } else {
+          completion(NSError(domain: "Fatal Error: Unwrapping optional would give nil.", code: 0, userInfo: nil))
+        }
+      }
     }
+}
+
+extension AuthCoordinator {
+  func subscribeToPushNotifications() {
+    Messaging.messaging().subscribe(toTopic: "pushNotifications")
+  }
 }

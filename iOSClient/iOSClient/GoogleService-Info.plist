@@ -7,9 +7,9 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>781205146949-fqm7a72rhk6afo6734cdoavn1n699db1.apps.googleusercontent.com</string>
+	<string>781205146949-lcn7fsr04vqg1o6kmcl3vjvt0epopau6.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.781205146949-fqm7a72rhk6afo6734cdoavn1n699db1</string>
+	<string>com.googleusercontent.apps.781205146949-lcn7fsr04vqg1o6kmcl3vjvt0epopau6</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDyExmM1LsAnRd_Sqfo2LgT_6jx4X5K25o</string>
 	<key>GCM_SENDER_ID</key>
@@ -17,7 +17,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.milad.chat.iOSClient</string>
+	<string>shadow.chat.milad.1</string>
 	<key>PROJECT_ID</key>
 	<string>shadow-74ec7</string>
 	<key>STORAGE_BUCKET</key>
@@ -33,7 +33,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:781205146949:ios:a3791961e2695625</string>
+	<string>1:781205146949:ios:aee77ce05a203bef</string>
 	<key>DATABASE_URL</key>
 	<string>https://shadow-74ec7.firebaseio.com</string>
 </dict>
