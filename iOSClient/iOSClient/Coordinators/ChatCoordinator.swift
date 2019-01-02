@@ -27,7 +27,8 @@ class ChatCoordinator {
   }
   
   func showChatroomVC() {
-    let chatroom = ChatroomViewController(user: Auth.auth().currentUser!)
+    let chatManager = ChatManager(path: ["channels", "main", "thread"].joined(separator: "/"))
+    let chatroom = ChatroomViewController(user: Auth.auth().currentUser!, chatManager: chatManager)
     chatroom.delegate = self
     navigationController.pushViewController(chatroom, animated: true)
   }

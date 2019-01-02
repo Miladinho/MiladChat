@@ -23,10 +23,10 @@ final class ChatroomViewController: MessagesViewController  {
   
   private let user: User
   private var messages: [Message] = []
-  private var messageListener: ListenerRegistration?
   private let storage = Storage.storage().reference()
   private let db = Firestore.firestore()
   private var reference: CollectionReference?
+  private var chatManager: ChatManager?
   
   private var isSendingPhoto = false {
     didSet {
@@ -38,8 +38,9 @@ final class ChatroomViewController: MessagesViewController  {
     }
   }
   
-  init(user: User) {
+  init(user: User, chatManager: ChatManager) {
     self.user = user
+    self.chatManager = chatManager
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -50,18 +51,7 @@ final class ChatroomViewController: MessagesViewController  {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    reference = db.collection(["channels", "main", "thread"].joined(separator: "/"))
-    
-    messageListener = reference?.addSnapshotListener { querySnapshot, error in
-      guard let snapshot = querySnapshot else {
-        print("Error listening for channel updates: \(error?.localizedDescription ?? "No error")")
-        return
-      }
-      
-      snapshot.documentChanges.forEach { change in
-        self.handleDocumentChange(change)
-      }
-    }
+    chatManager?.addChatListener(handleDocumentChange(_:))
     
     messageInputBar.delegate = self
     messagesCollectionView.messagesDataSource = self
@@ -95,7 +85,7 @@ final class ChatroomViewController: MessagesViewController  {
   }
   
   deinit {
-    messageListener?.remove()
+    chatManager?.removeChatListener()
   }
   
   // MARK: - Actions
