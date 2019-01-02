@@ -9,7 +9,7 @@ exports.sendChatNotification = functions.firestore.document('channels/main/threa
 	console.log(messageObject.content)
 	const payload = {
 		notification: {
-			title: `${messageObject.senderName} @ TestChatroom/Main`,
+			title: `${messageObject.senderName} @ Shadow LA`,
 			body: messageObject.content,
 			sound: "default"
 		}
