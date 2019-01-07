@@ -6,14 +6,20 @@ admin.initializeApp()
 
 exports.sendChatNotification = functions.firestore.document('channels/main/thread/{thread}').onCreate((snap, context) => {
 	var messageObject = snap.data()
-	console.log(messageObject.content)
+	var bodyMessage = messageObject.content
+
+	if (messageObject.url) {
+		bodyMessage = "📷 Photo"
+	}
+
 	const payload = {
 		notification: {
 			title: `${messageObject.senderName} @ Shadow LA`,
-			body: messageObject.content,
+			body: bodyMessage,
 			sound: "default"
 		}
 	}
+	
 	const options = {
 		priority: "high",
 		timeToLive: 60 * 60 * 24
