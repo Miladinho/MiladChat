@@ -64,13 +64,6 @@ extension AuthCoordinator: LoginViewControllerDelegate {
       } else if self != nil && self?.delegate != nil {
         self!.dismissLoginVC()
         self!.delegate.didAuthenticate(coordinator: self!)
-        Messaging.messaging().subscribe(toTopic: "pushNotifications") { error in
-          if error != nil {
-            print("error subscribing", error)
-          } else {
-            print("Subscribed to weather topic")
-          }
-        }
         completion(nil)
       } else {
         completion(NSError(domain: "Fatal Error: Unwrapping optional would give nil.", code: 0, userInfo: nil))
@@ -96,14 +89,6 @@ extension AuthCoordinator: CreateAccountViewControllerDelegate {
           changeRequest?.commitChanges() { error in
             self!.dismissCreateAccountVC()
             self!.delegate.didAuthenticate(coordinator: self!)
-            Messaging.messaging().subscribe(toTopic: "pushNotifications") { error in
-              if error != nil {
-                print("error subscribing", error)
-              } else {
-                print("Subscribed to weather topic")
-              }
-            }
-
             completion(nil)
           }
 
@@ -114,8 +99,8 @@ extension AuthCoordinator: CreateAccountViewControllerDelegate {
     }
 }
 
-extension AuthCoordinator {
-  func subscribeToPushNotifications() {
-    Messaging.messaging().subscribe(toTopic: "pushNotifications")
-  }
-}
+//extension AuthCoordinator {
+//  func subscribeToPushNotifications() {
+//    Messaging.messaging().subscribe(toTopic: "pushNotifications")
+//  }
+//}

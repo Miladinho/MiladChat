@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseMessaging
 
 class AppCoordinator {
   let navigationController: UINavigationController
@@ -37,6 +38,14 @@ class AppCoordinator {
     chatCoordinator = ChatCoordinator(navigationController: navigationController)
     chatCoordinator!.delegate = self
     chatCoordinator!.start()
+    
+    Messaging.messaging().subscribe(toTopic: "pushNotifications") { error in
+      if error != nil {
+        print("error subscribing", error)
+      } else {
+        print("Subscribed to topic")
+      }
+    }
   }
 }
 

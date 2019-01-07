@@ -36,4 +36,10 @@ class ChatManager {
   func removeChatListener() {
     messageListener?.remove()
   }
+  
+  func save(_ message: Message, callback: @escaping (Error?) -> Void) {
+    reference?.addDocument(data: message.representation) { error in
+      callback(error)
+    }
+  }
 }

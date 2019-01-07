@@ -23,7 +23,6 @@ final class ChatroomViewController: MessagesViewController  {
   private var messages: [Message] = []
   private let storage = Storage.storage().reference()
   private let db = Firestore.firestore()
-  private var reference: CollectionReference?
   private var chatManager: ChatManager?
   
   private var isSendingPhoto = false {
@@ -89,16 +88,29 @@ final class ChatroomViewController: MessagesViewController  {
   // MARK: - Actions
   
   @objc private func cameraButtonPressed() {
-    let picker = UIImagePickerController()
-    picker.delegate = self
+//    let picker = UIImagePickerController()
+//    picker.delegate = self
     
-    if UIImagePickerController.isSourceTypeAvailable(.camera) {
-      picker.sourceType = .camera
-    } else {
-      picker.sourceType = .photoLibrary
-    }
+//    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+//      picker.sourceType = .camera
+//    } else {
+//      picker.sourceType = .photoLibrary
+//    }
     
-    present(picker, animated: true, completion: nil)
+    let alert = UIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
+    alert.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
+      self.openCamera()
+    }))
+    
+    alert.addAction(UIAlertAction(title: "Gallery", style: .default, handler: { _ in
+      self.openGallery()
+    }))
+    
+    alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+    
+    self.present(alert, animated: true, completion: nil)
+    
+    //present(picker, animated: true, completion: nil)
   }
   
   @objc func logout() {
@@ -116,7 +128,7 @@ final class ChatroomViewController: MessagesViewController  {
 // MARK: - Helpers
 extension ChatroomViewController {
   private func save(_ message: Message) {
-    reference?.addDocument(data: message.representation) { error in
+    chatManager?.save(message) { error in
       if let e = error {
         print("Error sending message: \(e.localizedDescription)")
         return
@@ -139,9 +151,9 @@ extension ChatroomViewController {
     
     messagesCollectionView.reloadData()
     
-    if shouldScrollToBottom {
+    if shouldScrollToBottom || message.downloadURL != nil { // TODO: - gracefully handle scrolling when images download
       DispatchQueue.main.async {
-        self.messagesCollectionView.scrollToBottom(animated: true)
+        self.messagesCollectionView.scrollToBottom()
       }
     }
   }
@@ -161,7 +173,7 @@ extension ChatroomViewController {
           guard let image = image else {
             return
           }
-          
+
           message.image = image
           self.insertNewMessage(message)
         }
@@ -224,7 +236,7 @@ extension ChatroomViewController {
       message.downloadURL = url
       
       self.save(message)
-      self.messagesCollectionView.scrollToBottom()
+      //self.messagesCollectionView.scrollToBottom()
     }
   }
 }
@@ -236,13 +248,13 @@ extension ChatroomViewController: UIImagePickerControllerDelegate, UINavigationC
     
     if let asset = info[.phAsset] as? PHAsset {
       let size = CGSize(width: 500, height: 500)
-      PHImageManager.default().requestImage(for: asset, targetSize: size, contentMode: .aspectFit, options: nil) { result, info in
+      PHImageManager.default().requestImage(for: asset, targetSize: size, contentMode: .aspectFit, options: nil) { [weak self] result, info in
         guard let image = result else {
           return
         }
         
         print("sending image as PHAsset?")
-        self.sendPhoto(image)
+        self!.sendPhoto(image)
       }
     } else if let image = info[.originalImage] as? UIImage {
       print("sending image as UIImage")
@@ -254,6 +266,33 @@ extension ChatroomViewController: UIImagePickerControllerDelegate, UINavigationC
     picker.dismiss(animated: true, completion: nil)
   }
   
+  func openCamera() {
+    if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
+      let imagePicker = UIImagePickerController()
+      imagePicker.delegate = self
+      imagePicker.sourceType = UIImagePickerController.SourceType.camera
+      imagePicker.allowsEditing = false
+      self.present(imagePicker, animated: true, completion: nil)
+    } else {
+      let alert  = UIAlertController(title: "Warning", message: "You don't have camera", preferredStyle: .alert)
+      alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+      self.present(alert, animated: true, completion: nil)
+    }
+  }
+  
+  func openGallery() {
+    if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.photoLibrary){
+      let imagePicker = UIImagePickerController()
+      imagePicker.delegate = self
+      imagePicker.allowsEditing = false
+      imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
+      self.present(imagePicker, animated: true, completion: nil)
+    } else {
+      let alert  = UIAlertController(title: "Warning", message: "You don't have perission to access gallery.", preferredStyle: .alert)
+      alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+      self.present(alert, animated: true, completion: nil)
+    }
+  }
 }
 
 extension ChatroomViewController: MessagesDataSource {
