@@ -36,10 +36,19 @@ final class ChatroomViewController: MessagesViewController  {
         }
     }
     
-    let formatter: DateFormatter = {
+    lazy var formatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         return formatter
+    }()
+    
+    lazy var cameraItem:InputBarButtonItem = {
+        let cameraItem = InputBarButtonItem(type: .custom)
+        cameraItem.tintColor = .primary
+        cameraItem.image = #imageLiteral(resourceName: "camera")
+        cameraItem.addTarget(self, action: #selector(cameraButtonPressed),for: .primaryActionTriggered)
+        cameraItem.setSize(CGSize(width: 60, height: 30), animated: false)
+        return cameraItem
     }()
     
     init(user: User, chatManager: ChatManager) {
@@ -63,15 +72,9 @@ final class ChatroomViewController: MessagesViewController  {
         messagesCollectionView.messagesDisplayDelegate = self
         messagesCollectionView.messageCellDelegate = self
         
-        let cameraItem = InputBarButtonItem(type: .custom) //UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(cameraButtonPressed))
-        cameraItem.tintColor = .primary
-        cameraItem.image = #imageLiteral(resourceName: "camera")
-        cameraItem.addTarget(self, action: #selector(cameraButtonPressed),for: .primaryActionTriggered)
-        cameraItem.setSize(CGSize(width: 60, height: 30), animated: false)
         messageInputBar.leftStackView.alignment = .center
         messageInputBar.setLeftStackViewWidthConstant(to: 50, animated: false)
         messageInputBar.setStackViewItems([cameraItem], forStack: .left, animated: false)
-        
         maintainPositionOnKeyboardFrameChanged = true
     }
     
