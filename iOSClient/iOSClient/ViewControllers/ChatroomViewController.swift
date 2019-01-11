@@ -29,7 +29,8 @@ final class ChatroomViewController: MessagesViewController  {
   
   private var isSendingPhoto = false {
     didSet {
-      DispatchQueue.main.async {
+      DispatchQueue.main.async { [weak self] in
+        guard let self = self else { return }
         self.messageInputBar.isUserInteractionEnabled = !self.isSendingPhoto
       }
     }
@@ -165,7 +166,8 @@ extension ChatroomViewController {
     //print(message)
     
     if shouldScrollToBottom || message.downloadURL != nil { // TODO: - gracefully handle scrolling when images download
-      DispatchQueue.main.async {
+      DispatchQueue.main.async { [weak self] in
+        guard let self = self else { return }
         self.messagesCollectionView.reloadData()
         self.messagesCollectionView.scrollToBottom()
       }
