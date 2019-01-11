@@ -72,14 +72,7 @@ final class ChatroomViewController: MessagesViewController  {
         super.viewWillAppear(animated)
         setupNav()
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        let bottom = CGPoint(x: 0, y: self.messagesCollectionView.contentSize.height)
-        self.messagesCollectionView.setContentOffset(bottom, animated: true)
-
-    }
-    
+        
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.navigationBar.isHidden = true
@@ -91,12 +84,12 @@ final class ChatroomViewController: MessagesViewController  {
     }
     
     func setupNav() {
+        title = "Main Chat"
         let logOutButton = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(ChatroomViewController.logout) )
         navigationItem.leftBarButtonItem = logOutButton
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.barTintColor = .primary
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-        title = "Main Chat"
         navigationController?.navigationBar.isHidden = false
     }
     
