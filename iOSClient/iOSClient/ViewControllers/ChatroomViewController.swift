@@ -79,14 +79,9 @@ final class ChatroomViewController: MessagesViewController  {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        let logOutButton = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(ChatroomViewController.logout) )
-        navigationItem.leftBarButtonItem = logOutButton
-        navigationController?.navigationBar.tintColor = .white
-        navigationController?.navigationBar.barTintColor = .primary
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-        title = "Main Chat"
-        
-        navigationController?.navigationBar.isHidden = false
+        super.viewWillAppear(animated)
+        setupNav()
+    }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -96,6 +91,16 @@ final class ChatroomViewController: MessagesViewController  {
     
     deinit {
         chatManager?.removeChatListener()
+    }
+    
+    func setupNav() {
+        let logOutButton = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(ChatroomViewController.logout) )
+        navigationItem.leftBarButtonItem = logOutButton
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.barTintColor = .primary
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        title = "Main Chat"
+        navigationController?.navigationBar.isHidden = false
     }
     
     // MARK: - Actions
