@@ -11,6 +11,7 @@ import MessageKit
 import MessageInputBar
 import Photos
 import Firebase // for User class
+import SafariServices
 
 protocol ChatroomViewControllerProtocol: AnyObject {
   func didtapLogout(completion: @escaping (Error?) -> Void)
@@ -29,13 +30,16 @@ final class ChatroomViewController: MessagesViewController  {
   private var isSendingPhoto = false {
     didSet {
       DispatchQueue.main.async {
-//        self.messageInputBar.leftStackViewItems.forEach { item in
-//          item.isEnabled = !self.isSendingPhoto
-//        }
         self.messageInputBar.isUserInteractionEnabled = !self.isSendingPhoto
       }
     }
   }
+  
+  let formatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .medium
+    return formatter
+  }()
   
   init(user: User, chatManager: ChatManager) {
     self.user = user
@@ -49,13 +53,14 @@ final class ChatroomViewController: MessagesViewController  {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-        
+    
     chatManager?.addChatListener(handleDocumentChange(_:))
     
     messageInputBar.delegate = self
     messagesCollectionView.messagesDataSource = self
     messagesCollectionView.messagesLayoutDelegate = self
     messagesCollectionView.messagesDisplayDelegate = self
+    messagesCollectionView.messageCellDelegate = self
     
     let cameraItem = InputBarButtonItem(type: .custom) //UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(cameraButtonPressed))
     cameraItem.tintColor = .primary
@@ -72,9 +77,11 @@ final class ChatroomViewController: MessagesViewController  {
   override func viewWillAppear(_ animated: Bool) {
     let logOutButton = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(ChatroomViewController.logout) )
     navigationItem.leftBarButtonItem = logOutButton
-    navigationController!.navigationBar.tintColor = .black
+    navigationController?.navigationBar.tintColor = .white
+    navigationController?.navigationBar.barTintColor = .primary
+    navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
     title = "Main Chat"
-    
+
     navigationController?.navigationBar.isHidden = false
   }
   
@@ -125,7 +132,8 @@ extension ChatroomViewController {
         return
       }
       
-      self.messagesCollectionView.scrollToBottom()
+      self.messagesCollectionView.reloadData()
+      self.messagesCollectionView.scrollToBottom(animated: true) // Why would this not be done on main queue?
     }
   }
   
@@ -299,6 +307,27 @@ extension ChatroomViewController: UIImagePickerControllerDelegate, UINavigationC
       self.present(alert, animated: true, completion: nil)
     }
   }
+  
+  func imageTapped(image: UIImage) {
+    let newImageView = UIImageView(image: image)
+    newImageView.frame = UIScreen.main.bounds
+    newImageView.backgroundColor = .black
+    newImageView.contentMode = .scaleAspectFit
+    newImageView.isUserInteractionEnabled = true
+    let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
+    newImageView.addGestureRecognizer(tap)
+    self.view.addSubview(newImageView)
+    self.navigationController?.isNavigationBarHidden = true
+    self.tabBarController?.tabBar.isHidden = true
+    self.messageInputBar.isHidden = true
+  }
+  
+  @objc func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
+    self.navigationController?.isNavigationBarHidden = false
+    self.tabBarController?.tabBar.isHidden = false
+    self.messageInputBar.isHidden = false
+    sender.view?.removeFromSuperview()
+  }
 }
 
 extension ChatroomViewController: MessagesDataSource {
@@ -314,48 +343,89 @@ extension ChatroomViewController: MessagesDataSource {
     return messages[indexPath.section]
   }
   
-  func cellTopLabelAttributedText(for message: MessageType,
-                                  at indexPath: IndexPath) -> NSAttributedString? {
+  func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+//    let name = message.sender.displayName
+//    return NSAttributedString(
+//      string: name,
+//      attributes: [
+//        .font: UIFont.preferredFont(forTextStyle: .caption1),
+//        .foregroundColor: UIColor(white: 0.3, alpha: 1)
+//      ]
+//    )
     
-    let name = message.sender.displayName
-    return NSAttributedString(
-      string: name,
-      attributes: [
-        .font: UIFont.preferredFont(forTextStyle: .caption1),
-        .foregroundColor: UIColor(white: 0.3, alpha: 1)
-      ]
-    )
+    if indexPath.section % 3 == 0 {
+      return NSAttributedString(string: MessageKitDateFormatter.shared.string(from: message.sentDate), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+    }
+    return nil
   }
+  
+  func messageTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+    let name = message.sender.displayName
+    return NSAttributedString(string: name, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1)])
+  }
+  
+  func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+    
+    let dateString = formatter.string(from: message.sentDate)
+    return NSAttributedString(string: dateString, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
+  }
+
 }
 
 extension ChatroomViewController: MessageInputBarDelegate {
   func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-    let message = Message(user: user, content: text)
-    save(message)
+    //let message = Message(user: user, content: text)
+    //save(message)
+    //inputBar.inputTextView.text = ""
+    
+    for component in inputBar.inputTextView.components {
+      if let text = component as? String {
+        print(text)
+        let message = Message(user: user, content: text)
+        save(message)
+      } else if let img = component as? UIImage {
+        print(img)
+        //let message = Message(user: user, image: img)
+        sendPhoto(img)
+      }
+    }
     inputBar.inputTextView.text = ""
   }
+  
+
 
 }
 
 extension ChatroomViewController: MessagesLayoutDelegate {
-  
-  func avatarSize(for message: MessageType, at indexPath: IndexPath,in messagesCollectionView: MessagesCollectionView) -> CGSize {
-    return .zero
+  func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+    return 18
   }
   
-  func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-    return CGSize(width: 0, height: 8)
+  func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+    return 20
   }
   
-  func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-    return 0
+  func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+    return 16
   }
 }
 
 extension ChatroomViewController: MessagesDisplayDelegate {
-  
   func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
     return isFromCurrentSender(message: message) ? .primary : .incomingMessage
+  }
+  
+  func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+    // Remove the space the avatar occupies in collectionview cell
+    if let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout {
+      layout.setMessageIncomingAvatarSize(.zero)
+      layout.setMessageOutgoingAvatarSize(.zero)
+    }
+    avatarView.isHidden = true
+  }
+  
+  func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+    return isFromCurrentSender(message: message) ? .white : .darkText
   }
   
   func shouldDisplayHeader(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> Bool {
@@ -365,5 +435,33 @@ extension ChatroomViewController: MessagesDisplayDelegate {
   func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
     let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
     return .bubbleTail(corner, .curved)
+  }
+  
+  func enabledDetectors(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> [DetectorType] {
+    return [.url, .address, .phoneNumber, .date, .transitInformation]
+  }
+}
+
+extension ChatroomViewController: MessageLabelDelegate {
+  func didSelectURL(_ url: URL) {
+    print("tapped url")
+    let svc = SFSafariViewController(url: url)
+    present(svc, animated: true, completion: nil)
+  }
+}
+
+extension ChatroomViewController: MessageCellDelegate {
+  func didTapAvatar(in cell: MessageCollectionViewCell) {
+    print("Avatar tapped")
+  }
+  
+  func didTapMessage(in cell: MessageCollectionViewCell) {
+    print("Message tapped")
+    print(messagesCollectionView.indexPath(for: cell))
+    let message = messages[messagesCollectionView.indexPath(for: cell)![0]]
+    print(message)
+    if let image = message.image {
+      imageTapped(image: image)
+    }
   }
 }

@@ -31,7 +31,7 @@ import UIKit
 extension UIColor {
   
   static var primary: UIColor {
-    return UIColor(red: 1 / 255, green: 93 / 255, blue: 48 / 255, alpha: 1)
+    return UIColor(red: 93 / 255, green: 188 / 255, blue: 210 / 255, alpha: 1)
   }
   
   static var incomingMessage: UIColor {
