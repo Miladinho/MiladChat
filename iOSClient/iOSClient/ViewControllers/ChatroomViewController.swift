@@ -408,7 +408,7 @@ extension ChatroomViewController: MessageLabelDelegate {
   }
 }
 
-extension ChatroomViewController: MessageCellDelegate {  
+extension ChatroomViewController: MessageCellDelegate {
   func didTapMessage(in cell: MessageCollectionViewCell) {
     let message = messages[messagesCollectionView.indexPath(for: cell)![0]]
     if let image = message.image {

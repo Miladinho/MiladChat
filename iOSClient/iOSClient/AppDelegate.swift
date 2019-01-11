@@ -13,21 +13,20 @@ import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-  var window: UIWindow?
-  var appCoordinator: AppCoordinator?
+  var window: UIWindow? = UIWindow()
+  var appCoordinator: AppCoordinator? = AppCoordinator(navigationController: UINavigationController())
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     
     FirebaseApp.configure()
     
+    guard let coordinator = appCoordinator, let window = window else {
+        fatalError()
+    }
     
-    window = UIWindow()
-    let nc = UINavigationController()
-    appCoordinator = AppCoordinator(navigationController: nc)
-    appCoordinator!.start(loggedIn: false)
-    window?.rootViewController = nc
-    window?.makeKeyAndVisible()
-    
+    coordinator.start(loggedIn: false)
+    window.rootViewController = appCoordinator?.navigationController
+    window.makeKeyAndVisible()
     registerForPushNotifications()
     return true
   }
@@ -136,6 +135,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
           }
       }
   }
-
 }
 
