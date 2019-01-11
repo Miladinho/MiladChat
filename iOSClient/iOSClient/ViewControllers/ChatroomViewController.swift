@@ -99,7 +99,7 @@ final class ChatroomViewController: MessagesViewController  {
             
             self.appendMessages( snapshot?.documents.map {
                 return Message(document: $0)
-                }.compactMap{ $0 } ?? [])
+            }.compactMap{ $0 } ?? [])
             
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
