@@ -95,7 +95,6 @@ struct Message: MessageType {
       return nil
     }
   }
-  
 }
 
 private struct ImageMediaItem: MediaItem {
@@ -110,7 +109,6 @@ private struct ImageMediaItem: MediaItem {
     self.size = CGSize(width: 240, height: 240)
     self.placeholderImage = UIImage()
   }
-  
 }
 
 extension Message: DatabaseRepresentation {
@@ -130,7 +128,6 @@ extension Message: DatabaseRepresentation {
     
     return rep
   }
-  
 }
 
 extension Message: Comparable {
@@ -142,5 +139,4 @@ extension Message: Comparable {
   static func < (lhs: Message, rhs: Message) -> Bool {
     return lhs.sentDate < rhs.sentDate
   }
-  
 }

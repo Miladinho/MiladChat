@@ -28,7 +28,7 @@ class LoginViewController: UIViewController {
   }
   
   required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
+    super.init(coder: aDecoder)
   }
   
   override func viewDidLoad() {
@@ -37,8 +37,6 @@ class LoginViewController: UIViewController {
     let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
     tap.cancelsTouchesInView = false
     self.view.addGestureRecognizer(tap)
-    
-    alert.addAction(dismisAction)
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -46,32 +44,31 @@ class LoginViewController: UIViewController {
   }
   
   deinit {
-    print(self.nibName, #function)
+    print("Deinit Login")
   }
   
   func showError(message: String) {
     alert.message = message
+    alert.addAction(dismisAction)
     self.present(alert, animated: true)
   }
   
   @IBAction func enterChat(_ sender: Any) {
-    print(self.nibName, #function)
-    
     showLoadingHUD(for: self.view!, text: "Logging in...")
-    delegate!.didTapLogin(with: emailTextField.text!, password: passwordTextField.text!) {
-      [weak self] error in
+    delegate!.didTapLogin(with: emailTextField.text!, password: passwordTextField.text!) { [weak self] error in
+      guard let self = self else { return }
       if error != nil {
-        self!.showError(message: "Login failed!")
+        self.showError(message: "Login failed!")
       }
-      self!.hideLoadingHUD(for: self!.view!)
+      self.hideLoadingHUD(for: self.view)
     }
   }
   
   @IBAction func createAccount(_ sender: Any) {
-    print("create account clicked")
-    delegate!.didTapCreateAccount() {
-      error in
+    delegate!.didTapCreateAccount() { error in
+        if let error = error {
+            self.showError(message: error.localizedDescription)
+        }
     }
   }
-  
 }

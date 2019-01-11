@@ -33,12 +33,11 @@ class CreateAccountViewController: UIViewController {
     let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
     tap.cancelsTouchesInView = false
     self.view.addGestureRecognizer(tap)
-    
-    alert.addAction(dismisAction)
   }
   
   func showError(message: String) {
     alert.message = message
+    alert.addAction(dismisAction)
     self.present(alert, animated: true)
   }
   
@@ -60,12 +59,12 @@ class CreateAccountViewController: UIViewController {
       showLoadingHUD(for: self.view!, text: "Creating...")
       self.delegate!.didTapCreate(username: username, password: password, email: email, inviteCode: inviteCode) {
         [weak self] (error) in
-        if error != nil {
-          self!.showError(message: error!.localizedDescription)
+        guard let self = self else { return }
+        if let error = error {
+          self.showError(message: error.localizedDescription)
         }
-        self!.hideLoadingHUD(for: self!.view)
+        self.hideLoadingHUD(for: self.view)
       }
     }
   }
-  
 }

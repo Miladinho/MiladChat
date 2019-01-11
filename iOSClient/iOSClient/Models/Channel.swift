@@ -48,7 +48,6 @@ struct Channel {
     id = document.documentID
     self.name = name
   }
-  
 }
 
 extension Channel: DatabaseRepresentation {
@@ -62,7 +61,6 @@ extension Channel: DatabaseRepresentation {
     
     return rep
   }
-  
 }
 
 extension Channel: Comparable {
@@ -74,5 +72,4 @@ extension Channel: Comparable {
   static func < (lhs: Channel, rhs: Channel) -> Bool {
     return lhs.name < rhs.name
   }
-
 }

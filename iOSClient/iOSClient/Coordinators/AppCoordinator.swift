@@ -40,7 +40,7 @@ class AppCoordinator {
     chatCoordinator!.start()
     
     Messaging.messaging().subscribe(toTopic: "pushNotifications") { error in
-      if error != nil {
+      if let error = error {
         print("Error subscribing to topic", error)
       } else {
         print("Subscribed to topic")
@@ -51,7 +51,6 @@ class AppCoordinator {
 
 extension AppCoordinator: AuthCoordinatorDelegate {
   func didAuthenticate(coordinator: AuthCoordinator) {
-    print("AuthCoordinator did Authenticate")
     self.authCoordinator = nil
     self.navigationController.viewControllers.removeAll() // this is odd here, make a flow and clean nav on each flow change
     self.showChat()

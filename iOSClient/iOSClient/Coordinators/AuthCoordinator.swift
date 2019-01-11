@@ -80,18 +80,16 @@ extension AuthCoordinator: LoginViewControllerDelegate {
 extension AuthCoordinator: CreateAccountViewControllerDelegate {
   func didTapCreate(username: String, password: String, email: String, inviteCode: String, completion: @escaping (Error?) -> Void) {
       Auth.auth().createUser(withEmail: email, password: password) { [weak self] (result, error) in
-        print("did tap create", result, error)
         if error != nil {
           completion(error)
-        } else if self != nil && self?.delegate != nil {
+        } else if let self = self {
           let changeRequest = result?.user.createProfileChangeRequest()
           changeRequest?.displayName = username
           changeRequest?.commitChanges() { error in
-            self!.dismissCreateAccountVC()
-            self!.delegate.didAuthenticate(coordinator: self!)
+            self.dismissCreateAccountVC()
+            self.delegate.didAuthenticate(coordinator: self)
             completion(nil)
           }
-
         } else {
           completion(NSError(domain: "Fatal Error: Unwrapping optional would give nil.", code: 0, userInfo: nil))
         }
@@ -99,8 +97,3 @@ extension AuthCoordinator: CreateAccountViewControllerDelegate {
     }
 }
 
-//extension AuthCoordinator {
-//  func subscribeToPushNotifications() {
-//    Messaging.messaging().subscribe(toTopic: "pushNotifications")
-//  }
-//}

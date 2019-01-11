@@ -50,5 +50,4 @@ extension UIImage {
 
     return UIGraphicsGetImageFromCurrentImageContext()
   }
-  
 }
