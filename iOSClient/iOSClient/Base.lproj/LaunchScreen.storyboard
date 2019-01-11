@@ -18,15 +18,20 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Shadow Chat" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hyY-Gy-PQH">
-                                <rect key="frame" x="16" y="323" width="343" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chatIcon" translatesAutoresizingMaskIntoConstraints="NO" id="641-kn-mu8">
+                                <rect key="frame" x="88" y="180" width="199" height="199"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="641-kn-mu8" secondAttribute="height" multiplier="1:1" id="m7I-pe-5HP"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="641-kn-mu8" secondAttribute="trailing" constant="88" id="71T-Vk-Nv8"/>
+                            <constraint firstItem="641-kn-mu8" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="F0J-qL-j84"/>
+                            <constraint firstItem="641-kn-mu8" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="88" id="eiz-95-ICK"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="centerY" secondItem="641-kn-mu8" secondAttribute="centerY" constant="64" id="z43-Gb-dds"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                 </viewController>
@@ -35,4 +40,7 @@
             <point key="canvasLocation" x="52" y="374.66266866566718"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="chatIcon" width="1024" height="1024"/>
+    </resources>
 </document>
