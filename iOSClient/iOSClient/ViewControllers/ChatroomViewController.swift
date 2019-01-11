@@ -63,28 +63,9 @@ final class ChatroomViewController: MessagesViewController  {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        chatManager?.reference?.addSnapshotListener({[weak self] (snapshot, error) in
-            guard let self = self else { return }
-            let messages = snapshot?.documents.map {
-                return Message(document: $0)
-            }.compactMap{ $0 }
-            self.appendMessages(messages ?? [])
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.messagesCollectionView.scrollToBottom()
-            }
-        })
-        
-        messageInputBar.delegate = self
-        messagesCollectionView.messagesDataSource = self
-        messagesCollectionView.messagesLayoutDelegate = self
-        messagesCollectionView.messagesDisplayDelegate = self
-        messagesCollectionView.messageCellDelegate = self
-        
-        messageInputBar.leftStackView.alignment = .center
-        messageInputBar.setLeftStackViewWidthConstant(to: 50, animated: false)
-        messageInputBar.setStackViewItems([cameraItem], forStack: .left, animated: false)
-        maintainPositionOnKeyboardFrameChanged = true
+        setupMessageListener()
+        setupMessageInput()
+        setMessageCollectionDelegates()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -117,6 +98,36 @@ final class ChatroomViewController: MessagesViewController  {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         title = "Main Chat"
         navigationController?.navigationBar.isHidden = false
+    }
+    
+    func setupMessageListener() {
+        chatManager?.reference?.addSnapshotListener({[weak self] (snapshot, error) in
+            guard let self = self else { return }
+            
+            self.appendMessages( snapshot?.documents.map {
+                return Message(document: $0)
+                }.compactMap{ $0 } ?? [])
+            
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.messagesCollectionView.scrollToBottom()
+            }
+        })
+    }
+    
+    func setMessageCollectionDelegates() {
+        messagesCollectionView.messagesDataSource = self
+        messagesCollectionView.messagesLayoutDelegate = self
+        messagesCollectionView.messagesDisplayDelegate = self
+        messagesCollectionView.messageCellDelegate = self
+    }
+    
+    func setupMessageInput() {
+        messageInputBar.delegate = self
+        messageInputBar.leftStackView.alignment = .center
+        messageInputBar.setLeftStackViewWidthConstant(to: 50, animated: false)
+        messageInputBar.setStackViewItems([cameraItem], forStack: .left, animated: false)
+        maintainPositionOnKeyboardFrameChanged = true
     }
     
     // MARK: - Actions
