@@ -10,14 +10,14 @@ import Foundation
 import MBProgressHUD
 
 extension UIViewController {
-  func showLoadingHUD(for viewController: UIView, text: String) {
-    let hud = MBProgressHUD.showAdded(to: viewController, animated: true)
-    hud.label.text = text
-    viewController.isUserInteractionEnabled = false
-  }
-  
-  func hideLoadingHUD(for viewController: UIView) {
-    MBProgressHUD.hide(for: viewController, animated: true)
-    viewController.isUserInteractionEnabled = true
-  }
+    func showLoadingHUD(for viewController: UIView, text: String) {
+        let hud = MBProgressHUD.showAdded(to: viewController, animated: true)
+        hud.label.text = text
+        viewController.isUserInteractionEnabled = false
+    }
+    
+    func hideLoadingHUD(for viewController: UIView) {
+        MBProgressHUD.hide(for: viewController, animated: true)
+        viewController.isUserInteractionEnabled = true
+    }
 }

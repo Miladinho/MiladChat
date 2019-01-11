@@ -29,12 +29,12 @@
 import UIKit
 
 extension UIColor {
-  
-  static var primary: UIColor {
-    return UIColor(red: 93 / 255, green: 188 / 255, blue: 210 / 255, alpha: 1)
-  }
-  
-  static var incomingMessage: UIColor {
-    return UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
-  }
+    
+    static var primary: UIColor {
+        return UIColor(red: 93 / 255, green: 188 / 255, blue: 210 / 255, alpha: 1)
+    }
+    
+    static var incomingMessage: UIColor {
+        return UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
+    }
 }
