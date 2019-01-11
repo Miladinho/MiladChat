@@ -13,8 +13,8 @@ import FirebaseFirestore
 class ChatManager {
     private let storage = Storage.storage().reference()
     private let db = Firestore.firestore()
-    private var reference: CollectionReference?
     private var messageListener: ListenerRegistration?
+    var reference: CollectionReference?
     
     init(path: String) {
         reference = db.collection(path)

@@ -63,8 +63,17 @@ final class ChatroomViewController: MessagesViewController  {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        chatManager?.addChatListener(handleDocumentChange(_:))
+        chatManager?.reference?.addSnapshotListener({[weak self] (snapshot, error) in
+            guard let self = self else { return }
+            let messages = snapshot?.documents.map {
+                return Message(document: $0)
+            }.compactMap{ $0 }
+            self.appendMessages(messages ?? [])
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.messagesCollectionView.scrollToBottom()
+            }
+        })
         
         messageInputBar.delegate = self
         messagesCollectionView.messagesDataSource = self
@@ -169,6 +178,20 @@ extension ChatroomViewController {
                 self.messagesCollectionView.reloadData()
                 self.messagesCollectionView.scrollToBottom()
             }
+        }
+    }
+    
+    func appendMessages(_ newMessages:[Message]) {
+        newMessages.forEach {
+            if !self.messages.contains($0) {
+                self.messages.append($0)
+            }
+        }
+        self.messages.sort()
+        self.messagesCollectionView.reloadData()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.messagesCollectionView.scrollToBottom()
         }
     }
     
