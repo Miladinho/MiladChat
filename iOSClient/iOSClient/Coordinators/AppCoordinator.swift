@@ -41,7 +41,7 @@ class AppCoordinator {
     
     Messaging.messaging().subscribe(toTopic: "pushNotifications") { error in
       if error != nil {
-        print("error subscribing", error)
+        print("Error subscribing to topic", error)
       } else {
         print("Subscribed to topic")
       }

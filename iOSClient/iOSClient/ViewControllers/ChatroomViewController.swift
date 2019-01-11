@@ -8,6 +8,7 @@
 
 import UIKit
 import MessageKit
+import MessageInputBar
 import Photos
 import Firebase // for User class
 
@@ -28,9 +29,10 @@ final class ChatroomViewController: MessagesViewController  {
   private var isSendingPhoto = false {
     didSet {
       DispatchQueue.main.async {
-        self.messageInputBar.leftStackViewItems.forEach { item in
-          item.isEnabled = !self.isSendingPhoto
-        }
+//        self.messageInputBar.leftStackViewItems.forEach { item in
+//          item.isEnabled = !self.isSendingPhoto
+//        }
+        self.messageInputBar.isUserInteractionEnabled = !self.isSendingPhoto
       }
     }
   }
@@ -47,7 +49,7 @@ final class ChatroomViewController: MessagesViewController  {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+        
     chatManager?.addChatListener(handleDocumentChange(_:))
     
     messageInputBar.delegate = self
@@ -55,7 +57,7 @@ final class ChatroomViewController: MessagesViewController  {
     messagesCollectionView.messagesLayoutDelegate = self
     messagesCollectionView.messagesDisplayDelegate = self
     
-    let cameraItem = InputBarButtonItem(type: .system)
+    let cameraItem = InputBarButtonItem(type: .custom) //UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(cameraButtonPressed))
     cameraItem.tintColor = .primary
     cameraItem.image = #imageLiteral(resourceName: "camera")
     cameraItem.addTarget(self, action: #selector(cameraButtonPressed),for: .primaryActionTriggered)
@@ -88,15 +90,6 @@ final class ChatroomViewController: MessagesViewController  {
   // MARK: - Actions
   
   @objc private func cameraButtonPressed() {
-//    let picker = UIImagePickerController()
-//    picker.delegate = self
-    
-//    if UIImagePickerController.isSourceTypeAvailable(.camera) {
-//      picker.sourceType = .camera
-//    } else {
-//      picker.sourceType = .photoLibrary
-//    }
-    
     let alert = UIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
     alert.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
       self.openCamera()
@@ -109,8 +102,6 @@ final class ChatroomViewController: MessagesViewController  {
     alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
     
     self.present(alert, animated: true, completion: nil)
-    
-    //present(picker, animated: true, completion: nil)
   }
   
   @objc func logout() {
@@ -146,13 +137,28 @@ extension ChatroomViewController {
     messages.append(message)
     messages.sort()
     
+    //messagesCollectionView.reloadData()
+    
     let isLatestMessage = messages.index(of: message) == (messages.count - 1)
     let shouldScrollToBottom = messagesCollectionView.isAtBottom && isLatestMessage
     
-    messagesCollectionView.reloadData()
+    // Reload last section to update header/footer labels and insert a new one
+//    messagesCollectionView.performBatchUpdates({
+//      messagesCollectionView.insertSections([messages.count - 1])
+//      if messages.count >= 2 {
+//        messagesCollectionView.reloadSections([messages.count - 2])
+//      }
+//    }, completion: { [weak self] _ in
+//      if isLatestMessage == true {
+//        self?.messagesCollectionView.scrollToBottom(animated: true)
+//      }
+//    })
+    
+    //print(message)
     
     if shouldScrollToBottom || message.downloadURL != nil { // TODO: - gracefully handle scrolling when images download
       DispatchQueue.main.async {
+        self.messagesCollectionView.reloadData()
         self.messagesCollectionView.scrollToBottom()
       }
     }
@@ -297,15 +303,11 @@ extension ChatroomViewController: UIImagePickerControllerDelegate, UINavigationC
 
 extension ChatroomViewController: MessagesDataSource {
   func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
-    return 1
+    return messages.count
   }
   
   func currentSender() -> Sender {
     return Sender(id: user.uid, displayName: user.displayName!)
-  }
-  
-  func numberOfMessages(in messagesCollectionView: MessagesCollectionView) -> Int {
-    return messages.count
   }
   
   func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {

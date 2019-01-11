@@ -5,21 +5,21 @@ PODS:
   - BoringSSL/Implementation (10.0.6):
     - BoringSSL/Interface (= 10.0.6)
   - BoringSSL/Interface (10.0.6)
-  - Firebase/Auth (5.14.0):
+  - Firebase/Auth (5.15.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (= 5.1.0)
-  - Firebase/Core (5.14.0):
+    - FirebaseAuth (= 5.2.0)
+  - Firebase/Core (5.15.0):
     - Firebase/CoreOnly
     - FirebaseAnalytics (= 5.4.0)
-  - Firebase/CoreOnly (5.14.0):
-    - FirebaseCore (= 5.1.9)
-  - Firebase/Firestore (5.14.0):
+  - Firebase/CoreOnly (5.15.0):
+    - FirebaseCore (= 5.1.10)
+  - Firebase/Firestore (5.15.0):
     - Firebase/CoreOnly
-    - FirebaseFirestore (= 0.16.0)
-  - Firebase/Messaging (5.14.0):
+    - FirebaseFirestore (= 0.16.1)
+  - Firebase/Messaging (5.15.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (= 3.2.2)
-  - Firebase/Storage (5.14.0):
+  - Firebase/Storage (5.15.0):
     - Firebase/CoreOnly
     - FirebaseStorage (= 3.0.3)
   - FirebaseAnalytics (5.4.0):
@@ -32,23 +32,23 @@ PODS:
     - "GoogleUtilities/NSData+zlib (~> 5.2)"
     - nanopb (~> 0.3)
   - FirebaseAnalyticsInterop (1.1.0)
-  - FirebaseAuth (5.1.0):
+  - FirebaseAuth (5.2.0):
     - FirebaseAuthInterop (~> 1.0)
     - FirebaseCore (~> 5.1)
     - GoogleUtilities/Environment (~> 5.2)
     - GTMSessionFetcher/Core (~> 1.1)
   - FirebaseAuthInterop (1.0.0)
-  - FirebaseCore (5.1.9):
+  - FirebaseCore (5.1.10):
     - GoogleUtilities/Logger (~> 5.2)
-  - FirebaseFirestore (0.16.0):
+  - FirebaseFirestore (0.16.1):
     - FirebaseAuthInterop (~> 1.0)
     - FirebaseCore (~> 5.1)
-    - FirebaseFirestore/abseil-cpp (= 0.16.0)
+    - FirebaseFirestore/abseil-cpp (= 0.16.1)
     - "gRPC-C++ (= 0.0.5)"
     - leveldb-library (~> 1.20)
     - nanopb (~> 0.3.8)
     - Protobuf (~> 3.1)
-  - FirebaseFirestore/abseil-cpp (0.16.0):
+  - FirebaseFirestore/abseil-cpp (0.16.1):
     - FirebaseAuthInterop (~> 1.0)
     - FirebaseCore (~> 5.1)
     - "gRPC-C++ (= 0.0.5)"
@@ -113,7 +113,11 @@ PODS:
   - GTMSessionFetcher/Core (1.2.1)
   - leveldb-library (1.20)
   - MBProgressHUD (1.1.0)
-  - MessageKit (0.13.5)
+  - MessageInputBar (0.4.1):
+    - MessageInputBar/Core (= 0.4.1)
+  - MessageInputBar/Core (0.4.1)
+  - MessageKit (2.0.0):
+    - MessageInputBar/Core
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
     - nanopb/encode (= 0.3.901)
@@ -128,7 +132,8 @@ DEPENDENCIES:
   - Firebase/Messaging
   - Firebase/Storage
   - MBProgressHUD (~> 1.0)
-  - MessageKit (~> 0.13.5)
+  - MessageInputBar
+  - MessageKit
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -150,19 +155,20 @@ SPEC REPOS:
     - GTMSessionFetcher
     - leveldb-library
     - MBProgressHUD
+    - MessageInputBar
     - MessageKit
     - nanopb
     - Protobuf
 
 SPEC CHECKSUMS:
   BoringSSL: e10f92a27043805c01071fe815a5cd98ae8212e7
-  Firebase: 963d5685fae888a56d6d4d9cfce6b9c976958798
+  Firebase: 8bb9268bff82374f2cbaaabb143e725743c316ae
   FirebaseAnalytics: c06f9d70577d79074214700a71fd5d39de5550fb
   FirebaseAnalyticsInterop: e5f21be9af6548372e2f0815834ff909bff395a2
-  FirebaseAuth: 4a5cc5fc2d1721e509e24699b93ebc3d94b1e195
+  FirebaseAuth: 02e969ff430e156d99d4cb842d77b806b71ad7bb
   FirebaseAuthInterop: 0ffa57668be100582bb7643d4fcb7615496c41fc
-  FirebaseCore: 8f49b70f57ab5cbb032ef41d64992ded21606459
-  FirebaseFirestore: 0b2495ff27e5749fa0984c405ea58db3d070e075
+  FirebaseCore: 35747502d9e8c6ee217385ad04446c7c2aaf9c5c
+  FirebaseFirestore: 58043a1c2d2c91efdaa8d8f385cdbaa2ce750cfe
   FirebaseInstanceID: e2fa4cb35ef5558c200f7f0ad8a53e212215f93e
   FirebaseMessaging: b412996f6a09337d232bb3a6676ce4d1f353d024
   FirebaseStorage: 3d22c041370593e639fba013d1eb698a8dae2881
@@ -173,10 +179,11 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
-  MessageKit: c4bd50e285a0f0761bc23a2e982aa7840873c4f5
+  MessageInputBar: e81c7535347f1f7b923de7080409a535a004b6e4
+  MessageKit: 29c1c87e5a396d2ca7a3f712e5171dc9aba42a1e
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
 
-PODFILE CHECKSUM: 96f75e187af3dbc7f1dc42dbe324a712619adc3e
+PODFILE CHECKSUM: 728a45b534a7d7ccd77c1960396e4ab59a1d02bd
 
 COCOAPODS: 1.5.3

@@ -37,14 +37,14 @@ struct Message: MessageType {
   let sentDate: Date
   let sender: Sender
   
-  var data: MessageData {
+  var kind: MessageKind {
     if let image = image {
-      return .photo(image)
+      return .photo(ImageMediaItem(image: image))
     } else {
       return .text(content)
     }
   }
-  
+
   var messageId: String {
     return id ?? UUID().uuidString
   }
@@ -94,6 +94,21 @@ struct Message: MessageType {
     } else {
       return nil
     }
+  }
+  
+}
+
+private struct ImageMediaItem: MediaItem {
+  
+  var url: URL?
+  var image: UIImage?
+  var placeholderImage: UIImage
+  var size: CGSize
+  
+  init(image: UIImage) {
+    self.image = image
+    self.size = CGSize(width: 240, height: 240)
+    self.placeholderImage = UIImage()
   }
   
 }

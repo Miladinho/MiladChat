@@ -11,8 +11,8 @@ target 'iOSClient' do
   pod 'Firebase/Messaging'
   pod 'Firebase/Firestore'
   pod 'MBProgressHUD', '~> 1.0'
-  pod 'MessageKit', '~> 0.13.5'
-  #pod 'MessageInputBar'
+  pod 'MessageKit'
+  pod 'MessageInputBar'
   
   target 'iOSClientTests' do
     inherit! :search_paths
