@@ -113,11 +113,10 @@ final class ChatroomViewController: MessagesViewController  {
   }
   
   @objc func logout() {
-    print(#function)
     showLoadingHUD(for: self.view, text: "Logging out")
     delegate?.didtapLogout() { [weak self] (error) in
-      if error != nil {
-        print("ERROR OCCURED WHILE LOGGING OUT")
+      if let error = error {
+        print("ERROR OCCURED WHILE LOGGING OUT: \(error)")
       }
       self!.hideLoadingHUD(for: self!.view)
     }
@@ -128,8 +127,8 @@ final class ChatroomViewController: MessagesViewController  {
 extension ChatroomViewController {
   private func save(_ message: Message) {
     chatManager?.save(message) { error in
-      if let e = error {
-        print("Error sending message: \(e.localizedDescription)")
+      if let error = error {
+        print("Error sending message: \(error.localizedDescription)")
         return
       }
       
@@ -146,25 +145,9 @@ extension ChatroomViewController {
     messages.append(message)
     messages.sort()
     
-    //messagesCollectionView.reloadData()
-    
     let isLatestMessage = messages.index(of: message) == (messages.count - 1)
     let shouldScrollToBottom = messagesCollectionView.isAtBottom && isLatestMessage
-    
-    // Reload last section to update header/footer labels and insert a new one
-//    messagesCollectionView.performBatchUpdates({
-//      messagesCollectionView.insertSections([messages.count - 1])
-//      if messages.count >= 2 {
-//        messagesCollectionView.reloadSections([messages.count - 2])
-//      }
-//    }, completion: { [weak self] _ in
-//      if isLatestMessage == true {
-//        self?.messagesCollectionView.scrollToBottom(animated: true)
-//      }
-//    })
-    
-    //print(message)
-    
+
     if shouldScrollToBottom || message.downloadURL != nil { // TODO: - gracefully handle scrolling when images download
       DispatchQueue.main.async { [weak self] in
         guard let self = self else { return }
@@ -250,9 +233,7 @@ extension ChatroomViewController {
       
       var message = Message(user: self.user, image: image)
       message.downloadURL = url
-      
       self.save(message)
-      //self.messagesCollectionView.scrollToBottom()
     }
   }
 }
@@ -268,12 +249,9 @@ extension ChatroomViewController: UIImagePickerControllerDelegate, UINavigationC
         guard let image = result else {
           return
         }
-        
-        print("sending image as PHAsset?")
         self!.sendPhoto(image)
       }
     } else if let image = info[.originalImage] as? UIImage {
-      print("sending image as UIImage")
       sendPhoto(image)
     }
   }
@@ -346,15 +324,6 @@ extension ChatroomViewController: MessagesDataSource {
   }
   
   func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-//    let name = message.sender.displayName
-//    return NSAttributedString(
-//      string: name,
-//      attributes: [
-//        .font: UIFont.preferredFont(forTextStyle: .caption1),
-//        .foregroundColor: UIColor(white: 0.3, alpha: 1)
-//      ]
-//    )
-    
     if indexPath.section % 3 == 0 {
       return NSAttributedString(string: MessageKitDateFormatter.shared.string(from: message.sentDate), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
     }
@@ -367,35 +336,23 @@ extension ChatroomViewController: MessagesDataSource {
   }
   
   func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-    
     let dateString = formatter.string(from: message.sentDate)
     return NSAttributedString(string: dateString, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
   }
-
 }
 
 extension ChatroomViewController: MessageInputBarDelegate {
   func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-    //let message = Message(user: user, content: text)
-    //save(message)
-    //inputBar.inputTextView.text = ""
-    
     for component in inputBar.inputTextView.components {
       if let text = component as? String {
-        print(text)
         let message = Message(user: user, content: text)
         save(message)
       } else if let img = component as? UIImage {
-        print(img)
-        //let message = Message(user: user, image: img)
         sendPhoto(img)
       }
     }
     inputBar.inputTextView.text = ""
   }
-  
-
-
 }
 
 extension ChatroomViewController: MessagesLayoutDelegate {
@@ -446,7 +403,6 @@ extension ChatroomViewController: MessagesDisplayDelegate {
 
 extension ChatroomViewController: MessageLabelDelegate {
   func didSelectURL(_ url: URL) {
-    print("tapped url")
     let svc = SFSafariViewController(url: url)
     present(svc, animated: true, completion: nil)
   }
@@ -458,10 +414,7 @@ extension ChatroomViewController: MessageCellDelegate {
   }
   
   func didTapMessage(in cell: MessageCollectionViewCell) {
-    print("Message tapped")
-    print(messagesCollectionView.indexPath(for: cell))
     let message = messages[messagesCollectionView.indexPath(for: cell)![0]]
-    print(message)
     if let image = message.image {
       imageTapped(image: image)
     }
